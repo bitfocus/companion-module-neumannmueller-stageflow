@@ -251,8 +251,6 @@ class instance extends instance_skel {
 	}
 
 
-
-
 	/**
 	 * Process an updated configuration array.
 	 *

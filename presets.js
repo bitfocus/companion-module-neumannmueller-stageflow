@@ -72,7 +72,6 @@ module.exports = {
 		});
 
 
-
 		presets.push({
 			category: 'Timer Control',
 			label: 'Add or reduce x time',
@@ -157,8 +156,6 @@ module.exports = {
 				}
 			]
 		});
-
-
 
 
 		presets.push({
