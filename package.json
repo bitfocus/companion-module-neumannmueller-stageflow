@@ -9,12 +9,16 @@
     "StagePreview",
     "DSM"
   ],
-  "manufacturer": "Neumann&Müller ",
+  "manufacturer": "Neumann&Müller GmbH & Co. KG",
   "product": "Stageflow",
   "shortname": "Stageflow",
   "description": "Companion module to control N&M Stageflow timing app",
   "author": "Neumann&Müller GmbH & Co. KG - Jonathan Kadler <jonathan.kadler@neumannmueller.com>",
   "license": "MIT",
+  "repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-neumannmueller-stageflow.git"
+	},
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
