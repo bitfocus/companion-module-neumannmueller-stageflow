@@ -175,25 +175,6 @@ class instance extends instance_skel {
 		}
 	}
 
-	// /**
-	//  * Clean up the instance before it is destroyed.
-	//  *
-	//  * @access public
-	//  * @since 1.0.0
-	//  */
-	// destroy() {
-
-	// 	if (this.timer) {
-	// 		clearInterval(this.timer);
-	// 		delete this.timer;
-	// 	}
-
-	// 	if (this.socket !== undefined) {
-	// 		this.socket.destroy();
-	// 	}
-	// 	debug("destroy", this.id);
-	// }
-
 
 	/**
 	 * Main initialization function called once the module

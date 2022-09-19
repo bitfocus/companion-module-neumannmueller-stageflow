@@ -72,34 +72,6 @@ module.exports = {
 		});
 
 
-		// presets.push({
-		// 	category: 'Timer Control',
-		// 	label: 'Use Preset',
-		// 	bank: {
-		// 		style: 'text',
-		// 		text: '$(label:preset_0)',
-		// 		size: '14',
-		// 		color: this.rgb(0, 0, 0),
-		// 		bgcolor: this.rgb(255, 0, 255)
-		// 	},
-		// 	actions: [
-		// 		{
-		// 			action: 'preset',
-		// 			options: {
-		// 				presetID: '',
-		// 				directCall: false,
-		// 			}
-		// 		},
-		// 	],
-		// 	feedbacks: [
-		// 		{
-		// 			type: 'preset',
-		// 			options: {
-		// 				bgColor: this.rgb(255, 255, 0)
-		// 			}
-		// 		}
-		// 	]
-		// });
 
 		presets.push({
 			category: 'Timer Control',
