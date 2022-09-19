@@ -1,0 +1,25 @@
+{
+  "name": "neumannmueller-stageflow",
+  "version": "1.0.0",
+  "api_version": "1.0.0",
+  "keywords": [
+    "Software",
+    "Timing",
+    "Timer",
+    "StagePreview",
+    "DSM"
+  ],
+  "manufacturer": "Neumann&Müller ",
+  "product": "Stageflow",
+  "shortname": "Stageflow",
+  "description": "Companion module to control N&M Stageflow timing app",
+  "author": "Neumann&Müller GmbH & Co. KG - Jonathan Kadler <jonathan.kadler@neumannmueller.com>",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.5.1"
+  }
+}
