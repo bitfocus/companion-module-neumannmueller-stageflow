@@ -177,6 +177,22 @@ class instance extends instance_skel {
 
 
 	/**
+	 * Clean up the instance before it is destroyed.
+	 *
+	 * @access public
+	 * @since 1.0.0
+	 */
+	destroy() {
+
+		if (this.socket !== undefined) {
+			this.socket.destroy();
+		}
+		debug("destroy", this.id);
+	}
+
+
+
+	/**
 	 * Main initialization function called once the module
 	 * is OK to start doing things.
 	 *
@@ -221,6 +237,8 @@ class instance extends instance_skel {
 				this.initPresets()
 				this.checkFeedbacks()
 			})
+		} else {
+			this.status('STATUS_UNKNOWN', 'Connection not set')
 		}
 
 		this.sendCommand = (cmd, data) => {
@@ -259,17 +277,10 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	updateConfig(config) {
-		var resetConnection = false;
-
 		if (this.config.host != config.host) {
-			resetConnection = true;
-		}
-
-		this.config = config;
-		this.initPresets();
-
-		if (resetConnection === true || this.socket === undefined) {
+			this.config = config;
 			this.init_appConnection();
+			this.initPresets();
 		}
 	}
 
@@ -283,14 +294,12 @@ class instance extends instance_skel {
 	 */
 	setVariables(data) {
 		if (data.timerData) {
-			// console.log(data.timerData)
 			this.feedbackTimerState = data.timerData
 		}
 		if (data.remoteData) {
 			this.stageflowPresets = data.remoteData.presets
 			let presetID = 0
 			data.remoteData.presets.forEach(preset => {
-				// console.log(presetID);
 				const name = data.remoteData.presets[presetID].name;
 				this.setVariable(`preset_${presetID}`, name)
 				presetID++
