@@ -28,15 +28,12 @@ module.exports = {
 			],
 			feedbacks: [
 				{
-					type: 'start_btn',
-					options: {
-						active_fg: this.rgb(0, 0, 0),
-						active_bg: this.rgb(255, 255, 0),
-						paused_fg: this.rgb(0, 0, 0),
-						paused_bg: this.rgb(255, 255, 0),
-						stoped_fg: this.rgb(0, 0, 0),
-						stoped_bg: this.rgb(0, 255, 0)
-					}
+					type: 'timerActive',
+					style: {
+						text: 'PAUSE',
+						color: this.rgb(0, 0, 0),
+						bgcolor: this.rgb(255, 255, 0)
+					},
 				}
 			]
 		});
@@ -58,19 +55,14 @@ module.exports = {
 			],
 			feedbacks: [
 				{
-					type: 'reset_btn',
-					options: {
-						active_fg: this.rgb(0, 0, 0),
-						active_bg: this.rgb(255, 255, 0),
-						paused_fg: this.rgb(0, 0, 0),
-						paused_bg: this.rgb(255, 255, 0),
-						stoped_fg: this.rgb(182, 182, 182),
-						stoped_bg: this.rgb(0, 0, 0)
+					type: 'timerActive',
+					style: {
+						text: 'RESTART',
+						size: 14
 					}
 				}
 			]
 		});
-
 
 		presets.push({
 			category: 'Timer Control',
@@ -92,11 +84,176 @@ module.exports = {
 					}
 				},
 			],
+		});
+
+		presets.push({
+			category: 'Display Control',
+			label: 'Show Timer',
+			bank: {
+				style: 'text',
+				text: 'Show Timer',
+				size: '14',
+				color: this.rgb(0, 0, 0),
+				bgcolor: this.rgb(255, 255, 0)
+			},
+			actions: [
+				{
+					action: 'showTimer'
+				},
+			],
 			feedbacks: [
 				{
-					type: 'setMinSec',
+					type: 'btnActive',
+					style: {
+						color: this.rgb(0, 0, 0),
+						bgcolor: this.rgb(0, 255, 0),
+					},
 					options: {
-						bgColor: this.rgb(255, 255, 0)
+						key: 'showTimer'
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Display Control',
+			label: 'Show current time',
+			bank: {
+				style: 'text',
+				text: 'Show Time',
+				size: '14',
+				color: this.rgb(0, 0, 0),
+				bgcolor: this.rgb(255, 255, 0)
+			},
+			actions: [
+				{
+					action: 'showTime'
+				},
+			],
+			feedbacks: [
+				{
+					type: 'btnActive',
+					style: {
+						color: this.rgb(0, 0, 0),
+						bgcolor: this.rgb(0, 255, 0),
+					},
+					options: {
+						key: 'showTime'
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Display Control',
+			label: 'Show current date',
+			bank: {
+				style: 'text',
+				text: 'Show Date',
+				size: '14',
+				color: this.rgb(0, 0, 0),
+				bgcolor: this.rgb(255, 255, 0)
+			},
+			actions: [
+				{
+					action: 'showDate'
+				},
+			],
+			feedbacks: [
+				{
+					type: 'btnActive',
+					style: {
+						color: this.rgb(0, 0, 0),
+						bgcolor: this.rgb(0, 255, 0),
+					},
+					options: {
+						key: 'showDate'
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Display Control',
+			label: 'Blink when time is up',
+			bank: {
+				style: 'text',
+				text: 'Blink on time up',
+				size: '14',
+				color: this.rgb(0, 0, 0),
+				bgcolor: this.rgb(255, 255, 0)
+			},
+			actions: [
+				{
+					action: 'timerBlink'
+				},
+			],
+			feedbacks: [
+				{
+					type: 'btnActive',
+					style: {
+						color: this.rgb(0, 0, 0),
+						bgcolor: this.rgb(0, 255, 0),
+					},
+					options: {
+						key: 'timerBlink'
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Display Control',
+			label: 'Blackout',
+			bank: {
+				style: 'text',
+				text: 'Blackout',
+				size: '14',
+				color: this.rgb(0, 0, 0),
+				bgcolor: this.rgb(255, 255, 0)
+			},
+			actions: [
+				{
+					action: 'blackout'
+				},
+			],
+			feedbacks: [
+				{
+					type: 'btnActive',
+					style: {
+						color: this.rgb(0, 0, 0),
+						bgcolor: this.rgb(0, 255, 0),
+					},
+					options: {
+						key: 'blackout',
+					}
+				}
+			]
+		});
+
+		presets.push({
+			category: 'Display Control',
+			label: 'Flash',
+			bank: {
+				style: 'text',
+				text: 'Flash',
+				size: '14',
+				color: this.rgb(0, 0, 0),
+				bgcolor: this.rgb(255, 255, 0)
+			},
+			actions: [
+				{
+					action: 'flash'
+				},
+			],
+			feedbacks: [
+				{
+					type: 'btnActive',
+					style: {
+						color: this.rgb(0, 0, 0),
+						bgcolor: this.rgb(0, 255, 0),
+					}, options: {
+						key: 'flash',
 					}
 				}
 			]
@@ -119,11 +276,13 @@ module.exports = {
 			],
 			feedbacks: [
 				{
-					type: 'btn_active',
+					type: 'btnActive',
+					style: {
+						color: this.rgb(0, 0, 0),
+						bgcolor: this.rgb(0, 255, 0)
+					},
 					options: {
 						key: 'showText',
-						active_fg: this.rgb(0, 0, 0),
-						active_bg: this.rgb(0, 255, 0),
 					}
 				}
 			]
@@ -147,172 +306,7 @@ module.exports = {
 					}
 				},
 			],
-			feedbacks: [
-				{
-					type: 'setMessage',
-					options: {
-						bgColor: this.rgb(255, 255, 0)
-					}
-				}
-			]
-		});
 
-
-		presets.push({
-			category: 'Display Control',
-			label: 'Show Timer',
-			bank: {
-				style: 'text',
-				text: 'Show Timer',
-				size: '14',
-				color: this.rgb(0, 0, 0),
-				bgcolor: this.rgb(255, 255, 0)
-			},
-			actions: [
-				{
-					action: 'showTimer'
-				},
-			],
-			feedbacks: [
-				{
-					type: 'btn_active',
-					options: {
-						key: 'showTimer',
-						active_fg: this.rgb(0, 0, 0),
-						active_bg: this.rgb(0, 255, 0),
-					}
-				}
-			]
-		});
-		presets.push({
-			category: 'Display Control',
-			label: 'Show current time',
-			bank: {
-				style: 'text',
-				text: 'Show Time',
-				size: '14',
-				color: this.rgb(0, 0, 0),
-				bgcolor: this.rgb(255, 255, 0)
-			},
-			actions: [
-				{
-					action: 'showTime'
-				},
-			],
-			feedbacks: [
-				{
-					type: 'btn_active',
-					options: {
-						key: 'showTime',
-						active_fg: this.rgb(0, 0, 0),
-						active_bg: this.rgb(0, 255, 0),
-					}
-				}
-			]
-		});
-		presets.push({
-			category: 'Display Control',
-			label: 'Show current date',
-			bank: {
-				style: 'text',
-				text: 'Show Date',
-				size: '14',
-				color: this.rgb(0, 0, 0),
-				bgcolor: this.rgb(255, 255, 0)
-			},
-			actions: [
-				{
-					action: 'showDate'
-				},
-			],
-			feedbacks: [
-				{
-					type: 'btn_active',
-					options: {
-						key: 'showDate',
-						active_fg: this.rgb(0, 0, 0),
-						active_bg: this.rgb(0, 255, 0),
-					}
-				}
-			]
-		});
-		presets.push({
-			category: 'Display Control',
-			label: 'Blink when time is up',
-			bank: {
-				style: 'text',
-				text: 'Blink on time up',
-				size: '14',
-				color: this.rgb(0, 0, 0),
-				bgcolor: this.rgb(255, 255, 0)
-			},
-			actions: [
-				{
-					action: 'timerBlink'
-				},
-			],
-			feedbacks: [
-				{
-					type: 'btn_active',
-					options: {
-						key: 'timerBlink',
-						active_fg: this.rgb(0, 0, 0),
-						active_bg: this.rgb(0, 255, 0),
-					}
-				}
-			]
-		});
-		presets.push({
-			category: 'Display Control',
-			label: 'Blackout',
-			bank: {
-				style: 'text',
-				text: 'Blackout',
-				size: '14',
-				color: this.rgb(0, 0, 0),
-				bgcolor: this.rgb(255, 255, 0)
-			},
-			actions: [
-				{
-					action: 'blackout'
-				},
-			],
-			feedbacks: [
-				{
-					type: 'btn_active',
-					options: {
-						key: 'blackout',
-						active_fg: this.rgb(0, 0, 0),
-						active_bg: this.rgb(0, 255, 0),
-					}
-				}
-			]
-		});
-		presets.push({
-			category: 'Display Control',
-			label: 'Flash',
-			bank: {
-				style: 'text',
-				text: 'Flash',
-				size: '14',
-				color: this.rgb(0, 0, 0),
-				bgcolor: this.rgb(255, 255, 0)
-			},
-			actions: [
-				{
-					action: 'flash'
-				},
-			],
-			feedbacks: [
-				{
-					type: 'btn_active',
-					options: {
-						key: 'flash',
-						active_fg: this.rgb(0, 0, 0),
-						active_bg: this.rgb(0, 255, 0),
-					}
-				}
-			]
 		});
 
 		let sfPresets = this.stageflowPresets
@@ -326,7 +320,7 @@ module.exports = {
 					text: `$(label:preset_${presetID})`,
 					size: '14',
 					color: this.rgb(0, 0, 0),
-					bgcolor: this.rgb(255, 0, 255)
+					bgcolor: this.rgb(255, 255, 0)
 				},
 				actions: [
 					{
@@ -336,19 +330,12 @@ module.exports = {
 							directCall: false,
 						}
 					},
-				],
-				feedbacks: [
-					{
-						type: 'preset',
-						options: {
-							bgColor: this.rgb(255, 255, 0)
-						}
-					}
 				]
 			});
 
 			presetID++
 		})
+
 		return presets;
 	}
 };

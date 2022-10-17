@@ -60,7 +60,7 @@ class instance extends instance_skel {
 				required: true
 			},
 			{
-				type: 'textinput',
+				type: 'number',
 				id: 'port',
 				label: 'Stageflow port - e.g. 2703',
 				default: '2703',
@@ -165,13 +165,7 @@ class instance extends instance_skel {
 
 		if (task !== undefined) {
 			debug('sending ', task, "to", this.config.host);
-			if (this.currentStatus != this.STATUS_OK) {
-				this.init_appConnection(function () {
-					this.sendCommand(task, data);
-				});
-			} else {
-				this.sendCommand(task, data);
-			}
+			this.sendCommand(task, data);
 		}
 	}
 
@@ -183,7 +177,6 @@ class instance extends instance_skel {
 	 * @since 1.0.0
 	 */
 	destroy() {
-
 		if (this.socket !== undefined) {
 			this.socket.destroy();
 		}
@@ -241,8 +234,10 @@ class instance extends instance_skel {
 			this.status('STATUS_UNKNOWN', 'Connection not set')
 		}
 
-		this.sendCommand = (cmd, data) => {
-			this.socket.emit('remoteCMD', { cmd, data })
+		if (this.socket !== undefined) {
+			this.sendCommand = (cmd, data) => {
+				this.socket.emit('remoteCMD', { cmd, data })
+			}
 		}
 	}
 
