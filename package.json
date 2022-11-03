@@ -16,14 +16,14 @@
   "author": "Neumann&Müller GmbH & Co. KG - Jonathan Kadler <jonathan.kadler@neumannmueller.com>",
   "license": "MIT",
   "repository": {
-		"type": "git",
-		"url": "git+https://github.com/bitfocus/companion-module-neumannmueller-stageflow.git"
-	},
+    "type": "git",
+    "url": "git+https://github.com/bitfocus/companion-module-neumannmueller-stageflow.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "socket.io-client": "^4.5.1"
+    "socket.io-client": "^4.5.3"
   }
 }
