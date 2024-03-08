@@ -149,13 +149,16 @@ class StageflowInstance extends InstanceBase {
 			this.stageflowPresets = data.remoteData.presets
 			let variables = []
 			let presetID = 0
+			let vairableValues = {}
 			data.remoteData.presets.forEach((preset) => {
 				const name = data.remoteData.presets[presetID].name
 				let variableId = `preset_${presetID}`
 				variables.push({ variableId, name })
+				vairableValues[variableId] = name
 				presetID++
 			})
 			this.setVariableDefinitions(variables)
+			this.setVariableValues(vairableValues)
 			this.initPresets(this.stageflowPresets)
 		}
 	}

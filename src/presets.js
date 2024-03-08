@@ -440,6 +440,7 @@ module.exports = {
 		let presetID = 0
 		if (sfPresets.length >= 1)
 			sfPresets?.forEach((preset) => {
+				console.log(preset)
 				presets.push({
 					type: 'button',
 					category: 'Presets',
