@@ -112,7 +112,9 @@ module.exports = {
 					directCall: opt.directCall,
 				}
 				console.log(value)
+				this.sendCommand('updateTimer', { cmd: 'pause' })
 				this.sendCommand('updateTimer', { cmd, value })
+				this.sendCommand('updateTimer', { cmd: 'reset' })
 			},
 		}
 		actions['timerBlink'] = {
