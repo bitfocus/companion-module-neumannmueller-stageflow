@@ -125,15 +125,6 @@ module.exports = {
 					up: [],
 				},
 			],
-			feedbacks: [
-				{
-					feedbackId: 'timerActive',
-					style: {
-						text: 'RESTART',
-						size: 14,
-					},
-				},
-			],
 		})
 
 		presets.push({
