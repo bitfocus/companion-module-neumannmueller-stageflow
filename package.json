@@ -1,6 +1,6 @@
 {
 	"name": "neumannmueller-stageflow",
-	"version": "2.0.2",
+	"version": "2.1.0",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -12,13 +12,14 @@
 		"package": "companion-module-build"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.7.0",
+		"@companion-module/base": "^1.12.1",
 		"lodash": "^4.17.21",
 		"socket.io-client": "^4.5.3"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^1.5.0"
+		"@companion-module/tools": "^2.3.0",
+		"prettier": "^3.6.2"
 	},
-		"prettier": "@companion-module/tools/.prettierrc.json"
-
+	"prettier": "@companion-module/tools/.prettierrc.json",
+	"packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
