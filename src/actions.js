@@ -11,10 +11,16 @@ module.exports = {
 		let self = this // required to have reference to outer `this`
 
 		var actions = {}
-		actions['start'] = {
+		actions['startPause'] = {
 			name: 'Start or Pause',
 			callback: (action) => {
 				this.sendCommand('updateTimer', { cmd: this.feedbackTimerState.active ? 'pause' : 'start' })
+			},
+		}
+		actions['start'] = {
+			name: 'Start',
+			callback: (action) => {
+				this.sendCommand('updateTimer', { cmd: 'start' })
 			},
 		}
 		actions['pause'] = {
@@ -71,6 +77,63 @@ module.exports = {
 				let cmd = opt.direction
 				let value = opt.minSec == 'sec' || opt.time == 0 ? opt.time : opt.time * 60
 				this.sendCommand('updateTimer', { cmd, value })
+			},
+		}
+		actions['customPreset'] = {
+			name: 'Define Preset',
+			options: [
+				{
+					type: 'number',
+					label: 'Input Time',
+					id: 'time',
+				},
+				{
+					type: 'dropdown',
+					label: 'Minutes or Seconds',
+					id: 'minSec',
+					default: 'sec',
+					choices: [
+						{ id: 'min', label: 'Minutes' },
+						{ id: 'sec', label: 'Seconds' },
+					],
+				},
+				{
+					type: 'number',
+					label: 'Warntime in Seconds',
+					id: 'warnTime',
+				},
+				{
+					type: 'dropdown',
+					label: 'Count Up or Down',
+					id: 'direction',
+					default: 'countDown',
+					choices: [
+						{ id: 'countDown', label: 'Down' },
+						{ id: 'countUp', label: 'Up' },
+					],
+				},
+				{
+					type: 'checkbox',
+					label: 'Direct Call',
+					id: 'directCall',
+					default: false,
+				},
+			],
+			callback: (action) => {
+				let opt = action.options
+				let direction = opt.direction
+				let time = opt.minSec == 'sec' || opt.time == 0 ? opt.time * 1000 : opt.time * 60 * 1000
+				let warnTime = opt.warnTime * 1000
+				this.sendCommand('updateTimer', { cmd: 'pause' })
+				this.sendCommand('updateTimer', { cmd: direction })
+				this.sendCommand('updateTimer', { cmd: 'warnTime', value: warnTime })
+				this.sendCommand('updateTimer', { cmd: 'inputTime', value: time })
+				this.sendCommand('updateTimer', { cmd: 'reset' })
+
+				if (opt.directCall)
+					setTimeout(() => {
+						this.sendCommand('updateTimer', { cmd: 'start' })
+					}, 200)
 			},
 		}
 		actions['setMessage'] = {

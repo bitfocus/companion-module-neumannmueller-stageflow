@@ -25,7 +25,7 @@ module.exports = {
 				{
 					down: [
 						{
-							actionId: 'start',
+							actionId: 'startPause',
 						},
 					],
 					up: [],
@@ -39,6 +39,44 @@ module.exports = {
 						color: combineRgb(0, 0, 0),
 						bgcolor: combineRgb(255, 255, 0),
 					},
+					options: {
+						key: 'active',
+					},
+				},
+			],
+		})
+		presets.push({
+			type: 'button',
+			category: 'Timer Control',
+			name: 'Start Timer',
+			style: {
+				text: 'START',
+				size: '20',
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(0, 255, 0),
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'start',
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'timerActive',
+					style: {
+						text: 'Running',
+						size: '18',
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(255, 255, 0),
+					},
+					options: {
+						key: 'active',
+					},
 				},
 			],
 		})
@@ -48,7 +86,7 @@ module.exports = {
 			name: 'Pause Timer',
 			style: {
 				text: 'PAUSE',
-				size: '18',
+				size: '20',
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
 			},
@@ -68,6 +106,9 @@ module.exports = {
 					style: {
 						color: combineRgb(0, 0, 0),
 						bgcolor: combineRgb(0, 255, 0),
+					},
+					options: {
+						key: 'active',
 					},
 				},
 			],
@@ -100,6 +141,9 @@ module.exports = {
 					style: {
 						text: 'RESTART',
 						size: 14,
+					},
+					options: {
+						key: 'active',
 					},
 				},
 			],
@@ -368,7 +412,7 @@ module.exports = {
 		presets.push({
 			type: 'button',
 			category: 'Message Control',
-			name: 'Send Message',
+			name: 'Send prepared Message',
 			style: {
 				style: 'text',
 				text: 'Show Message',
@@ -391,6 +435,31 @@ module.exports = {
 					feedbackId: 'btnActive',
 					style: {
 						text: 'Hide Message',
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(0, 255, 0),
+					},
+					options: {
+						key: 'showText',
+					},
+				},
+			],
+		})
+		presets.push({
+			type: 'button',
+			category: 'Message Control',
+			name: 'Display prepared Message',
+			style: {
+				style: 'text',
+				text: `$(generic-module:preparedMessage)`,
+				size: 'auto',
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(182, 182, 182),
+			},
+			steps: [],
+			feedbacks: [
+				{
+					feedbackId: 'btnActive',
+					style: {
 						color: combineRgb(0, 0, 0),
 						bgcolor: combineRgb(0, 255, 0),
 					},
@@ -427,9 +496,39 @@ module.exports = {
 			],
 		})
 
+		presets.push({
+			type: 'button',
+			category: 'Presets',
+			name: 'Custom Preset',
+			style: {
+				style: 'text',
+				text: 'Custom Preset',
+				size: '14',
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 0, 255),
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'customPreset',
+							options: {
+								time: '0',
+								minSec: 'sec',
+								direction: 'countDown',
+								driectCall: true,
+								warnTime: '0',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+		})
+
 		let sfPresets = stageflowPresets || []
 		let presetID = 0
-		if (sfPresets.length >= 1)
+		if (sfPresets.length >= 1) {
 			sfPresets?.forEach((preset) => {
 				console.log(preset)
 				presets.push({
@@ -462,6 +561,121 @@ module.exports = {
 
 				presetID++
 			})
+		}
+
+		// Presets for current time, combined time, hours, minutes, seconds
+
+		presets.push({
+			type: 'button',
+			category: 'Timer Display',
+			name: 'Timer combined',
+			style: {
+				style: 'text',
+				text: `$(generic-module:combined)`,
+				size: '17',
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(182, 182, 182),
+			},
+			steps: [],
+			feedbacks: [
+				{
+					feedbackId: 'timerActive',
+					style: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(0, 255, 0),
+					},
+					options: {
+						key: 'timeIsNotUp',
+					},
+				},
+				{
+					feedbackId: 'timeIsUp',
+					style: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(255, 0, 0),
+					},
+					options: {
+						key: 'timeIsUp',
+					},
+				},
+			],
+		})
+		presets.push({
+			type: 'button',
+			category: 'Timer Display',
+			name: 'Timer Hours',
+			style: {
+				style: 'text',
+				text: `$(generic-module:hours)`,
+				size: 'auto',
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(182, 182, 182),
+			},
+			steps: [],
+			feedbacks: [
+				{
+					feedbackId: 'btnActive',
+					style: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(0, 255, 0),
+					},
+					options: {
+						key: 'active',
+					},
+				},
+			],
+		})
+		presets.push({
+			type: 'button',
+			category: 'Timer Display',
+			name: 'Timer Minutes',
+			style: {
+				style: 'text',
+				text: `$(generic-module:minutes)`,
+				size: 'auto',
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(182, 182, 182),
+			},
+			steps: [],
+			feedbacks: [
+				{
+					feedbackId: 'timerActive',
+					style: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(0, 255, 0),
+					},
+				},
+			],
+		})
+		presets.push({
+			type: 'button',
+			category: 'Timer Display',
+			name: 'Timer seconds',
+			style: {
+				style: 'text',
+				text: `$(generic-module:seconds)`,
+				size: 'auto',
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(182, 182, 182),
+			},
+			steps: [],
+			feedbacks: [
+				{
+					feedbackId: 'timerActive',
+					style: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(0, 255, 0),
+					},
+				},
+				{
+					feedbackId: 'timeIsUp',
+					style: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(255, 0, 0),
+					},
+				},
+			],
+		})
 
 		return presets
 	},

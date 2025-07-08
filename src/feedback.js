@@ -1,5 +1,3 @@
-const { size } = require('lodash')
-
 module.exports = {
 	/**
 	 * Get the available feedbacks.
@@ -16,7 +14,36 @@ module.exports = {
 			name: 'Change style of button when timer is active',
 			callback: (feedback) => {
 				let state = this.feedbackTimerState
-				if (state.active) {
+				if (feedback?.options?.key == 'timeIsNotUp') {
+					if (!state.timeIsUp && state.active) {
+						return true
+					} else {
+						return false
+					}
+				}
+				if (feedback?.options?.key == 'timeIsUp') {
+					if (state.timeIsUp && state.active) {
+						return true
+					} else {
+						return false
+					}
+				}
+
+				if (feedback?.options?.key == 'active') {
+					if (state.active) {
+						return true
+					} else {
+						return false
+					}
+				}
+			},
+		}
+		feedbacks['timeIsUp'] = {
+			type: 'boolean',
+			name: 'Change style of button when time is up',
+			callback: (feedback) => {
+				let state = this.feedbackTimerState
+				if (state.timeIsUp) {
 					return true
 				} else {
 					return false

@@ -7,8 +7,10 @@ const presets = require('./src/presets')
 const configFields = require('./src/configFields')
 const UpgradeScripts = require('./src/upgrades')
 
-var debug
-var log
+let debug
+let log
+
+var timeDiff = 0 // time difference between host and localTime in ms
 
 class StageflowInstance extends InstanceBase {
 	/**
@@ -25,6 +27,14 @@ class StageflowInstance extends InstanceBase {
 		Object.assign(this, { ...configFields, ...actions, ...feedback, ...presets })
 		this.feedbackTimerState = {}
 		this.stageflowPresets = {}
+		this.timeToDisplay = {
+			currentTime: 0,
+			countTime: 0,
+			hours: 0,
+			minutes: 0,
+			seconds: 0,
+			combined: '0:00:00',
+		}
 	}
 
 	/**
@@ -73,6 +83,7 @@ class StageflowInstance extends InstanceBase {
 			this.socket.on('connect', () => {
 				console.log('socket connected | id:', this.socket.id)
 				this.socket.emit('register', 'remote')
+				this.socket.emit('register', 'stage')
 				this.updateStatus(InstanceStatus.Ok, 'Connected')
 				this.sendCommand('requestData')
 			})
@@ -86,6 +97,16 @@ class StageflowInstance extends InstanceBase {
 				this.initFeedbacks()
 				this.checkFeedbacks()
 			})
+			this.socket.on('toStage', (data) => {
+				if (data.timeSync) {
+					timeDiff = new Date(data.timeSync) - new Date()
+					console.info('Time difference to host: ' + timeDiff + ' ms')
+				}
+			})
+			this.socket.on('disconnect', () => {
+				this.debug('socket disconnected')
+				this.updateStatus(InstanceStatus.Disconnected, 'Disconnected')
+			})
 		} else {
 			this.updateStatus(InstanceStatus.BadConfig, 'Connection not set')
 		}
@@ -95,6 +116,7 @@ class StageflowInstance extends InstanceBase {
 				this.socket.emit('remoteCMD', { cmd, data })
 			}
 		}
+		this.timer()
 	}
 
 	/**
@@ -144,23 +166,131 @@ class StageflowInstance extends InstanceBase {
 	setVariables(data) {
 		if (data.timerData) {
 			this.feedbackTimerState = data.timerData
+			this.setVariableValues({ preparedMessage: this.feedbackTimerState.text })
 		}
 		if (data.remoteData?.presets) {
 			this.stageflowPresets = data.remoteData.presets
 			let variables = []
 			let presetID = 0
 			let vairableValues = {}
-			data.remoteData.presets.forEach((preset) => {
-				const name = data.remoteData.presets[presetID].name
-				let variableId = `preset_${presetID}`
-				variables.push({ variableId, name })
-				vairableValues[variableId] = name
-				presetID++
-			})
+
+			for (let i = 0; i < data.remoteData.presets.length; i++) {
+				const preset = data.remoteData.presets[i]
+				let variableId = `preset_${i}`
+				variables.push({ variableId, name: preset.name })
+				vairableValues[variableId] = preset.name
+			}
+
+			let displayVariables = [
+				{ variableId: 'currentTime', name: 'Current Time' },
+				{ variableId: 'combined', name: 'Combined Time' },
+				{ variableId: 'hours', name: 'Hours' },
+				{ variableId: 'minutes', name: 'Minutes' },
+				{ variableId: 'seconds', name: 'Seconds' },
+				{ variableId: 'preparedMessage', name: 'Prepared Message' },
+			]
+			variables = variables.concat(displayVariables)
+
+			let defaultDisplayValues = {
+				currentTime: new Date().getTime() + timeDiff,
+				combined: '0:00:00',
+				hours: 0,
+				minutes: 0,
+				seconds: 0,
+				preparedMessage: 'Prepared Message',
+			}
+
+			vairableValues = Object.assign(vairableValues, defaultDisplayValues)
 			this.setVariableDefinitions(variables)
 			this.setVariableValues(vairableValues)
 			this.initPresets(this.stageflowPresets)
 		}
+	}
+
+	timer() {
+		setTimeout(() => {
+			this.timer()
+		}, 100)
+
+		if (this.feedbackTimerState.active) {
+			this.timeToDisplay.currentTime = new Date().getTime() + timeDiff
+
+			if (
+				this.feedbackTimerState.inputCount === 'up' ||
+				this.feedbackTimerState.count === 'up' ||
+				this.feedbackTimerState.inputTime < 0
+			) {
+				this.countUp()
+			} else {
+				this.countDown()
+			}
+
+			this.checkTimerDirection()
+		} else if (this.feedbackTimerState.pause) {
+			this.timeToDisplay.countTime = this.feedbackTimerState.countTime + timeDiff
+
+			this.handleDisplayTime()
+		} else {
+			this.timeToDisplay.countTime = this.feedbackTimerState.inputTime
+			this.handleDisplayTime()
+		}
+	}
+
+	checkTimerDirection() {
+		let currentTimeIsUpState = this.feedbackTimerState.timeIsUp
+
+		if (this.feedbackTimerState.inputCount != this.feedbackTimerState.count) {
+			this.feedbackTimerState.timeIsUp = true
+		} else {
+			this.feedbackTimerState.timeIsUp = false
+		}
+
+		if (currentTimeIsUpState != this.feedbackTimerState.timeIsUp) this.checkFeedbacks()
+	}
+	handleDisplayTime() {
+		let date = new Date(this.timeToDisplay.countTime)
+
+		this.timeToDisplay.hours = date.getUTCHours()
+		this.timeToDisplay.minutes = date.getUTCMinutes()
+		this.timeToDisplay.seconds = date.getUTCSeconds()
+
+		// if less than 10, add a leading zero
+		if (this.timeToDisplay.minutes < 10) {
+			this.timeToDisplay.minutes = '0' + this.timeToDisplay.minutes
+		}
+		if (this.timeToDisplay.seconds < 10) {
+			this.timeToDisplay.seconds = '0' + this.timeToDisplay.seconds
+		}
+		// 		this.timeToDisplay.combined = `${this.timeToDisplay.hours}:${this
+		this.timeToDisplay.combined = `${this.timeToDisplay.hours}:${this.timeToDisplay.minutes}:${this.timeToDisplay.seconds}`
+
+		this.setVariableValues(this.timeToDisplay)
+	}
+	countDown() {
+		this.timeToDisplay.countTime =
+			(this.timeToDisplay.currentTime - this.feedbackTimerState.inputTime - this.feedbackTimerState.startTime + 16) * -1
+		if (this.timeToDisplay.countTime < 1000) {
+			this.feedbackTimerState.count = 'up'
+			this.countUp()
+		} else {
+			this.handleDisplayTime()
+		}
+	}
+	countUp() {
+		if (this.feedbackTimerState.inputCount === this.feedbackTimerState.count) {
+			this.timeToDisplay.countTime = this.timeToDisplay.currentTime - this.feedbackTimerState.startTime
+		} else {
+			if (this.feedbackTimerState.stopAt0) {
+				this.timeToDisplay.countTime = 0
+			} else {
+				this.timeToDisplay.countTime =
+					this.timeToDisplay.currentTime - this.feedbackTimerState.inputTime - this.feedbackTimerState.startTime + 16
+				if (this.feedbackTimerState.timeIsUp) this.timeToDisplay.countTime += 1000
+			}
+		}
+
+		if (this.timeToDisplay.countTime < 1000) this.timeToDisplay.countTime = 0
+		this.handleDisplayTime()
 	}
 }
 
