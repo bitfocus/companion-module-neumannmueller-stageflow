@@ -24,7 +24,7 @@ module.exports = {
 			},
 		}
 		actions['pause'] = {
-			name: 'Start or Pause',
+			name: 'Pause',
 			callback: (action) => {
 				this.sendCommand('updateTimer', { cmd: 'pause' })
 			},
@@ -181,19 +181,19 @@ module.exports = {
 			},
 		}
 		actions['timerBlink'] = {
-			label: 'Send / Hide message to stage',
+			name: 'Blink screen when time is up',
 			callback: (action) => {
 				this.sendCommand('updateTimer', { cmd: 'timerBlink', value: this.feedbackTimerState.timerBlink ? false : true })
 			},
 		}
 		actions['showText'] = {
-			label: 'Send / Hide message to stage',
+			name: 'Send / Hide message to stage',
 			callback: (action) => {
 				this.sendCommand('updateTimer', { cmd: 'showText', value: this.feedbackTimerState.showText ? false : true })
 			},
 		}
 		actions['showTimer'] = {
-			label: 'Show / Hide Timer',
+			name: 'Show / Hide Timer',
 			callback: (action) => {
 				this.sendCommand('updateTimer', {
 					cmd: 'showTimer',
@@ -202,25 +202,25 @@ module.exports = {
 			},
 		}
 		actions['showTime'] = {
-			label: 'Show / Hide current time',
+			name: 'Show / Hide current time',
 			callback: (action) => {
 				this.sendCommand('updateTimer', { cmd: 'showTime', value: this.feedbackTimerState.showTime ? false : true })
 			},
 		}
 		actions['showDate'] = {
-			label: 'Show / Hide current date',
+			name: 'Show / Hide current date',
 			callback: (action) => {
 				this.sendCommand('updateTimer', { cmd: 'showDate', value: this.feedbackTimerState.showDate ? false : true })
 			},
 		}
 		actions['blackout'] = {
-			label: 'Blackout',
+			name: 'Blackout',
 			callback: (action) => {
 				this.sendCommand('updateTimer', { cmd: 'blackout', value: this.feedbackTimerState.blackout ? false : true })
 			},
 		}
 		actions['flash'] = {
-			label: 'Flash',
+			name: 'Flash',
 			callback: (action) => {
 				this.sendCommand('updateTimer', { cmd: 'flash', value: this.feedbackTimerState.flash ? false : true })
 			},
