@@ -614,13 +614,23 @@ module.exports = {
 			steps: [],
 			feedbacks: [
 				{
-					feedbackId: 'btnActive',
+					feedbackId: 'timerActive',
 					style: {
 						color: combineRgb(0, 0, 0),
 						bgcolor: combineRgb(0, 255, 0),
 					},
 					options: {
-						key: 'active',
+						key: 'timeIsNotUp',
+					},
+				},
+				{
+					feedbackId: 'timeIsUp',
+					style: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(255, 0, 0),
+					},
+					options: {
+						key: 'timeIsUp',
 					},
 				},
 			],
@@ -644,6 +654,19 @@ module.exports = {
 						color: combineRgb(0, 0, 0),
 						bgcolor: combineRgb(0, 255, 0),
 					},
+					options: {
+						key: 'timeIsNotUp',
+					},
+				},
+				{
+					feedbackId: 'timeIsUp',
+					style: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(255, 0, 0),
+					},
+					options: {
+						key: 'timeIsUp',
+					},
 				},
 			],
 		})
@@ -666,12 +689,18 @@ module.exports = {
 						color: combineRgb(0, 0, 0),
 						bgcolor: combineRgb(0, 255, 0),
 					},
+					options: {
+						key: 'timeIsNotUp',
+					},
 				},
 				{
 					feedbackId: 'timeIsUp',
 					style: {
 						color: combineRgb(0, 0, 0),
 						bgcolor: combineRgb(255, 0, 0),
+					},
+					options: {
+						key: 'timeIsUp',
 					},
 				},
 			],
