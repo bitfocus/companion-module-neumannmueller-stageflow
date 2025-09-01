@@ -152,6 +152,22 @@ module.exports = {
 				this.sendCommand('updateTimer', { cmd, value })
 			},
 		}
+		actions['setFullscreenMessage'] = {
+			name: 'Define fullscreen message to send to stage',
+			options: [
+				{
+					type: 'textinput',
+					label: 'Input Fullscreen Message',
+					id: 'message',
+				},
+			],
+			callback: (action) => {
+				let opt = action.options
+				let cmd = 'fullscreenText'
+				let value = opt.message
+				this.sendCommand('updateTimer', { cmd, value })
+			},
+		}
 		actions['preset'] = {
 			name: 'Chose Preset',
 			options: [
@@ -190,6 +206,15 @@ module.exports = {
 			name: 'Send / Hide message to stage',
 			callback: (action) => {
 				this.sendCommand('updateTimer', { cmd: 'showText', value: this.feedbackTimerState.showText ? false : true })
+			},
+		}
+		actions['showFullscreenText'] = {
+			name: 'Send / Hide fullscreen message to stage',
+			callback: (action) => {
+				this.sendCommand('updateTimer', {
+					cmd: 'showFullscreenText',
+					value: this.feedbackTimerState.showFullscreenText ? false : true,
+				})
 			},
 		}
 		actions['showTimer'] = {

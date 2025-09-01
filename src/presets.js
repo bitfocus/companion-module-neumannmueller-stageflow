@@ -412,7 +412,7 @@ module.exports = {
 		presets.push({
 			type: 'button',
 			category: 'Message Control',
-			name: 'Send prepared Message',
+			name: 'Send prepared message',
 			style: {
 				style: 'text',
 				text: 'Show Message',
@@ -447,7 +447,7 @@ module.exports = {
 		presets.push({
 			type: 'button',
 			category: 'Message Control',
-			name: 'Display prepared Message',
+			name: 'Display prepared message',
 			style: {
 				style: 'text',
 				text: `$(generic-module:preparedMessage)`,
@@ -469,7 +469,6 @@ module.exports = {
 				},
 			],
 		})
-
 		presets.push({
 			type: 'button',
 			category: 'Message Control',
@@ -488,6 +487,92 @@ module.exports = {
 							actionId: 'setMessage',
 							options: {
 								message: 'Change Message Here',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+		})
+
+		presets.push({
+			type: 'button',
+			category: 'Message Control',
+			name: 'Send prepared fullscreen message',
+			style: {
+				style: 'text',
+				text: 'Show fullscreen message',
+				size: '14',
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'showFullscreenText',
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'btnActive',
+					style: {
+						text: 'Hide fullscreen message',
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(0, 255, 0),
+					},
+					options: {
+						key: 'showFullscreenText',
+					},
+				},
+			],
+		})
+		presets.push({
+			type: 'button',
+			category: 'Message Control',
+			name: 'Display prepared fullscreen message',
+			style: {
+				style: 'text',
+				text: `$(generic-module:preparedFullscreenMessage)`,
+				size: 'auto',
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(182, 182, 182),
+			},
+			steps: [],
+			feedbacks: [
+				{
+					feedbackId: 'btnActive',
+					style: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(0, 255, 0),
+					},
+					options: {
+						key: 'showFullscreenText',
+					},
+				},
+			],
+		})
+		presets.push({
+			type: 'button',
+			category: 'Message Control',
+			name: 'Define fullscreen message',
+			style: {
+				style: 'text',
+				text: 'Fullscreen message - Please change text',
+				size: '14',
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 0, 255),
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'setFullscreenMessage',
+							options: {
+								message: 'Change fullscreen message here',
 							},
 						},
 					],

@@ -167,6 +167,7 @@ class StageflowInstance extends InstanceBase {
 		if (data.timerData) {
 			this.feedbackTimerState = data.timerData
 			this.setVariableValues({ preparedMessage: this.feedbackTimerState.text })
+			this.setVariableValues({ preparedFullscreenMessage: this.feedbackTimerState.fullscreenText })
 		}
 		if (data.remoteData?.presets) {
 			this.stageflowPresets = data.remoteData.presets
@@ -187,7 +188,8 @@ class StageflowInstance extends InstanceBase {
 				{ variableId: 'hours', name: 'Hours' },
 				{ variableId: 'minutes', name: 'Minutes' },
 				{ variableId: 'seconds', name: 'Seconds' },
-				{ variableId: 'preparedMessage', name: 'Prepared Message' },
+				{ variableId: 'preparedMessage', name: 'Prepared message' },
+				{ variableId: 'preparedFullscreenMessage', name: 'Prepared fullscreen message' },
 			]
 			variables = variables.concat(displayVariables)
 
@@ -197,7 +199,8 @@ class StageflowInstance extends InstanceBase {
 				hours: 0,
 				minutes: 0,
 				seconds: 0,
-				preparedMessage: 'Prepared Message',
+				preparedMessage: 'Prepared message',
+				preparedFullscreenMessage: 'Prepared fullscreen message',
 			}
 
 			vairableValues = Object.assign(vairableValues, defaultDisplayValues)
