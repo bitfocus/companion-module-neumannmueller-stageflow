@@ -5,6 +5,7 @@
 	"description": "Companion module to control N&M Stageflow timing app",
 	"version": "0.0.0",
 	"license": "MIT",
+	"type": "connection",
 	"repository": "git+https://github.com/bitfocus/companion-module-neumannmueller-stageflow.git",
 	"bugs": "https://github.com/bitfocus/companion-module-neumannmueller-stageflow/issues",
 	"maintainers": [
@@ -18,9 +19,15 @@
 		"type": "node22",
 		"api": "nodejs-ipc",
 		"apiVersion": "0.0.0",
-		"entrypoint": "..\\index.js"
+		"entrypoint": "../src/main.js"
 	},
 	"manufacturer": "Neumann&Müller GmbH & Co. KG",
 	"products": ["Stageflow"],
-	"keywords": ["Software", "Timing", "Timer", "StagePreview", "DSM"]
+	"keywords": ["Software", "Timing", "Timer", "StagePreview", "DSM"],
+	"bonjourQueries": {
+		"stageflow": {
+			"type": "stageflow",
+			"protocol": "tcp"
+		}
+	}
 }

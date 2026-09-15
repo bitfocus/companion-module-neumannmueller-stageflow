@@ -1,796 +1,268 @@
-const { combineRgb } = require('@companion-module/base')
+import { combineRgb } from '@companion-module/base'
 
-module.exports = {
-	/**
-	 * Get the available presets.
-	 *
-	 * @returns {Object[]} the available feedbacks
-	 * @access public
-	 * @since 1.0.0
-	 */
+const BLACK = combineRgb(0, 0, 0)
+const GRAY = combineRgb(182, 182, 182)
+const GREEN = combineRgb(0, 255, 0)
+const YELLOW = combineRgb(255, 255, 0)
+const RED = combineRgb(255, 0, 0)
+const ORANGE = combineRgb(255, 128, 0)
+const MAGENTA = combineRgb(255, 0, 255)
 
-	getPresets(stageflowPresets) {
-		const presets = []
-		presets.push({
-			type: 'button',
-			category: 'Timer Control',
-			name: 'Start/Pause Timer',
-			style: {
-				text: 'START\npause',
-				size: 'auto',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+/** Simple one-action button preset. */
+const button = (name, style, actions, feedbacks = []) => ({
+	type: 'simple',
+	name,
+	style,
+	steps: [{ down: actions, up: [] }],
+	feedbacks,
+})
+
+/** Preset for a server/assign toggle action with btnActive feedback. */
+const togglePreset = (actionId, text, feedbackKey = actionId) =>
+	button(
+		text,
+		{ text, size: '14', color: BLACK, bgcolor: YELLOW },
+		[{ actionId, options: { mode: 'toggle' } }],
+		[
+			{
+				feedbackId: 'btnActive',
+				options: { key: feedbackKey },
+				style: { color: BLACK, bgcolor: GREEN },
 			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'startPause',
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
+		],
+	)
+
+/** Timer display preset showing one variable, colored by timer state. */
+const displayPreset = (name, text, size = 'auto') =>
+	button(
+		name,
+		{ text, size, color: BLACK, bgcolor: GRAY },
+		[],
+		[
+			{
+				feedbackId: 'timerActive',
+				options: { key: 'timeIsNotUp' },
+				style: { color: BLACK, bgcolor: GREEN },
+			},
+			{
+				feedbackId: 'warnZone',
+				options: {},
+				style: { color: BLACK, bgcolor: ORANGE },
+			},
+			{
+				feedbackId: 'timeIsUp',
+				options: {},
+				style: { color: BLACK, bgcolor: RED },
+			},
+		],
+	)
+
+export function buildPresets(self) {
+	const label = self.label
+	const v = (variableId) => `$(${label}:${variableId})`
+
+	const presets = {
+		// Timer Control /////////////////////////////////////////////////////
+		startPause: button(
+			'Start/Pause Timer',
+			{ text: 'START\npause', size: 'auto', color: BLACK, bgcolor: GREEN },
+			[{ actionId: 'startPause', options: {} }],
+			[
 				{
 					feedbackId: 'timerActive',
-					style: {
-						text: 'PAUSE\nstart',
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(255, 255, 0),
-					},
-					options: {
-						key: 'active',
-					},
+					options: { key: 'active' },
+					style: { text: 'PAUSE\nstart', color: BLACK, bgcolor: YELLOW },
 				},
 			],
-		})
-		presets.push({
-			type: 'button',
-			category: 'Timer Control',
-			name: 'Start Timer',
-			style: {
-				text: 'START',
-				size: '20',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'start',
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
+		),
+		start: button(
+			'Start Timer',
+			{ text: 'START', size: '20', color: BLACK, bgcolor: GREEN },
+			[{ actionId: 'start', options: {} }],
+			[
 				{
 					feedbackId: 'timerActive',
-					style: {
-						text: 'Running',
-						size: '18',
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(255, 255, 0),
-					},
-					options: {
-						key: 'active',
-					},
+					options: { key: 'active' },
+					style: { text: 'Running', size: '18', color: BLACK, bgcolor: YELLOW },
 				},
 			],
-		})
-		presets.push({
-			type: 'button',
-			category: 'Timer Control',
-			name: 'Pause Timer',
-			style: {
-				text: 'PAUSE',
-				size: '20',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'pause',
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
+		),
+		pause: button(
+			'Pause Timer',
+			{ text: 'PAUSE', size: '20', color: BLACK, bgcolor: YELLOW },
+			[{ actionId: 'pause', options: {} }],
+			[
 				{
 					feedbackId: 'timerActive',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'active',
-					},
+					options: { key: 'active' },
+					style: { color: BLACK, bgcolor: GREEN },
 				},
 			],
-		})
-
-		presets.push({
-			type: 'button',
-			category: 'Timer Control',
-			name: 'Restart/Reset Timer',
-			style: {
-				style: 'text',
-				text: 'RESET',
-				size: '18',
-				color: combineRgb(182, 182, 182),
-				bgcolor: combineRgb(0, 0, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'reset',
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
+		),
+		reset: button(
+			'Restart/Reset Timer',
+			{ text: 'RESET', size: '18', color: GRAY, bgcolor: BLACK },
+			[{ actionId: 'reset', options: {} }],
+			[
 				{
 					feedbackId: 'timerActive',
-					style: {
-						text: 'RESTART',
-						size: 14,
-					},
-					options: {
-						key: 'active',
-					},
+					options: { key: 'active' },
+					style: { text: 'RESTART', size: '14' },
 				},
 			],
-		})
-		presets.push({
-			type: 'button',
-			category: 'Timer Control',
-			name: 'Reset & Pause Timer',
-			style: {
-				style: 'text',
-				text: 'RESET\nPause',
-				size: 'auto',
-				color: combineRgb(182, 182, 182),
-				bgcolor: combineRgb(0, 0, 0),
+		),
+		resetPause: button('Reset & Pause Timer', { text: 'RESET\nPause', size: 'auto', color: GRAY, bgcolor: BLACK }, [
+			{ actionId: 'resetPause', options: {} },
+		]),
+		addTime: button(
+			'Add or reduce x time',
+			{ text: 'Set x Seconds or Minutes', size: '14', color: BLACK, bgcolor: MAGENTA },
+			[{ actionId: 'setMinSec', options: { time: 0, minSec: 'sec', direction: 'plus' } }],
+		),
+		customPreset: button('Custom Preset', { text: 'Custom Preset', size: '14', color: BLACK, bgcolor: MAGENTA }, [
+			{
+				actionId: 'customPreset',
+				options: { time: 0, minSec: 'sec', direction: 'countDown', directCall: true, warnTime: 0 },
 			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'resetPause',
-						},
-					],
-					up: [],
-				},
-			],
-		})
+		]),
 
-		presets.push({
-			type: 'button',
-			category: 'Timer Control',
-			name: 'Add or reduce x time',
-			style: {
-				style: 'text',
-				text: 'Set x Seconds or Minutes',
-				size: '14',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 0, 255),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'setMinSec',
-							options: {
-								time: '0',
-								minSec: 'sec',
-								direction: 'plus',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-		})
+		// Display Control ///////////////////////////////////////////////////
+		showTimer: togglePreset('showTimer', 'Show Timer'),
+		showTime: togglePreset('showTime', 'Show Time'),
+		showDate: togglePreset('showDate', 'Show Date'),
+		showTimeBar: togglePreset('showTimeBar', 'Show Time Bar'),
+		showMinus: togglePreset('showMinus', 'Show Minus'),
+		showInSeconds: togglePreset('showInSeconds', 'Show in Seconds'),
+		stopAt0: togglePreset('stopAt0', 'Stop at 0'),
+		syncSeconds: togglePreset('syncSeconds', 'Sync Seconds'),
+		timerBlink: togglePreset('timerBlink', 'Blink on time up'),
+		backgroundBlink: togglePreset('backgroundBlink', 'Background Blink'),
+		blackout: togglePreset('blackout', 'Blackout'),
+		flash: togglePreset('flash', 'Flash'),
 
-		presets.push({
-			type: 'button',
-			category: 'Display Control',
-			name: 'Show Timer',
-			style: {
-				style: 'text',
-				text: 'Show Timer',
-				size: '14',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'showTimer',
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
+		// Message Control ///////////////////////////////////////////////////
+		showMessage: button(
+			'Send prepared message',
+			{ text: 'Show Message', size: '14', color: BLACK, bgcolor: YELLOW },
+			[{ actionId: 'showText', options: { mode: 'toggle' } }],
+			[
 				{
 					feedbackId: 'btnActive',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'showTimer',
-					},
+					options: { key: 'showText' },
+					style: { text: 'Hide Message', color: BLACK, bgcolor: GREEN },
 				},
 			],
-		})
-
-		presets.push({
-			type: 'button',
-			category: 'Display Control',
-			name: 'Show current time',
-			style: {
-				style: 'text',
-				text: 'Show Time',
-				size: '14',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'showTime',
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
+		),
+		displayMessage: button(
+			'Display prepared message',
+			{ text: v('preparedMessage'), size: 'auto', color: BLACK, bgcolor: GRAY },
+			[],
+			[
 				{
 					feedbackId: 'btnActive',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'showTime',
-					},
+					options: { key: 'showText' },
+					style: { color: BLACK, bgcolor: GREEN },
 				},
 			],
-		})
-
-		presets.push({
-			type: 'button',
-			category: 'Display Control',
-			name: 'Show current date',
-			style: {
-				style: 'text',
-				text: 'Show Date',
-				size: '14',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'showDate',
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
+		),
+		defineMessage: button(
+			'Define Message',
+			{ text: 'Message - Please change text', size: '14', color: BLACK, bgcolor: MAGENTA },
+			[{ actionId: 'setMessage', options: { message: 'Change Message Here' } }],
+		),
+		showFullscreen: button(
+			'Send prepared fullscreen message',
+			{ text: 'Show fullscreen message', size: '14', color: BLACK, bgcolor: YELLOW },
+			[{ actionId: 'showFullscreenText', options: { mode: 'toggle' } }],
+			[
 				{
 					feedbackId: 'btnActive',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'showDate',
-					},
+					options: { key: 'showFullscreenText' },
+					style: { text: 'Hide fullscreen message', color: BLACK, bgcolor: GREEN },
 				},
 			],
-		})
-
-		presets.push({
-			type: 'button',
-			category: 'Display Control',
-			name: 'Blink when time is up',
-			style: {
-				style: 'text',
-				text: 'Blink on time up',
-				size: '14',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'timerBlink',
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
+		),
+		displayFullscreen: button(
+			'Display prepared fullscreen message',
+			{ text: v('preparedFullscreenMessage'), size: 'auto', color: BLACK, bgcolor: GRAY },
+			[],
+			[
 				{
 					feedbackId: 'btnActive',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'timerBlink',
-					},
+					options: { key: 'showFullscreenText' },
+					style: { color: BLACK, bgcolor: GREEN },
 				},
 			],
-		})
+		),
+		defineFullscreen: button(
+			'Define fullscreen message',
+			{ text: 'Fullscreen message - Please change text', size: '14', color: BLACK, bgcolor: MAGENTA },
+			[{ actionId: 'setFullscreenMessage', options: { message: 'Change fullscreen message here' } }],
+		),
 
-		presets.push({
-			type: 'button',
-			category: 'Display Control',
-			name: 'Blackout',
-			style: {
-				style: 'text',
-				text: 'Blackout',
-				size: '14',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'blackout',
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'btnActive',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'blackout',
-					},
-				},
-			],
-		})
+		// Timer Display /////////////////////////////////////////////////////
+		timerCombined: displayPreset('Timer combined', v('combined'), '17'),
+		timerHours: displayPreset('Timer Hours', v('hours')),
+		timerMinutes: displayPreset('Timer Minutes', v('minutes')),
+		timerSeconds: displayPreset('Timer seconds', v('seconds')),
+	}
 
-		presets.push({
-			type: 'button',
-			category: 'Display Control',
-			name: 'Flash',
-			style: {
-				style: 'text',
-				text: 'Flash',
-				size: '14',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'flash',
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'btnActive',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'flash',
-					},
-				},
-			],
-		})
+	// Dynamic Stageflow presets /////////////////////////////////////////////
+	const sfIds = []
+	const sfPresets = self.stageflowPresets ?? []
+	for (let i = 0; i < sfPresets.length; i++) {
+		const id = `sfPreset_${i}`
+		sfIds.push(id)
+		presets[id] = button(
+			`Use Preset: ${sfPresets[i]?.name ?? i}`,
+			{ text: v(`preset_${i}`), size: 'auto', color: BLACK, bgcolor: YELLOW },
+			[{ actionId: 'preset', options: { presetID: i, directCall: false } }],
+		)
+	}
 
-		presets.push({
-			type: 'button',
-			category: 'Message Control',
-			name: 'Send prepared message',
-			style: {
-				style: 'text',
-				text: 'Show Message',
-				size: '14',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'showText',
-						},
-					],
-					up: [],
-				},
+	const structure = [
+		{
+			id: 'timerControl',
+			name: 'Timer Control',
+			definitions: ['startPause', 'start', 'pause', 'reset', 'resetPause', 'addTime', 'customPreset'],
+		},
+		{
+			id: 'displayControl',
+			name: 'Display Control',
+			definitions: [
+				'showTimer',
+				'showTime',
+				'showDate',
+				'showTimeBar',
+				'showMinus',
+				'showInSeconds',
+				'stopAt0',
+				'syncSeconds',
+				'timerBlink',
+				'backgroundBlink',
+				'blackout',
+				'flash',
 			],
-			feedbacks: [
-				{
-					feedbackId: 'btnActive',
-					style: {
-						text: 'Hide Message',
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'showText',
-					},
-				},
+		},
+		{
+			id: 'messageControl',
+			name: 'Message Control',
+			definitions: [
+				'showMessage',
+				'displayMessage',
+				'defineMessage',
+				'showFullscreen',
+				'displayFullscreen',
+				'defineFullscreen',
 			],
-		})
-		presets.push({
-			type: 'button',
-			category: 'Message Control',
-			name: 'Display prepared message',
-			style: {
-				style: 'text',
-				text: `$(generic-module:preparedMessage)`,
-				size: 'auto',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(182, 182, 182),
-			},
-			steps: [],
-			feedbacks: [
-				{
-					feedbackId: 'btnActive',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'showText',
-					},
-				},
-			],
-		})
-		presets.push({
-			type: 'button',
-			category: 'Message Control',
-			name: 'Define Message',
-			style: {
-				style: 'text',
-				text: 'Message - Please change text',
-				size: '14',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 0, 255),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'setMessage',
-							options: {
-								message: 'Change Message Here',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-		})
+		},
+		...(sfIds.length ? [{ id: 'sfPresets', name: 'Stageflow Presets', definitions: sfIds }] : []),
+		{
+			id: 'timerDisplay',
+			name: 'Timer Display',
+			definitions: ['timerCombined', 'timerHours', 'timerMinutes', 'timerSeconds'],
+		},
+	]
 
-		presets.push({
-			type: 'button',
-			category: 'Message Control',
-			name: 'Send prepared fullscreen message',
-			style: {
-				style: 'text',
-				text: 'Show fullscreen message',
-				size: '14',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'showFullscreenText',
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'btnActive',
-					style: {
-						text: 'Hide fullscreen message',
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'showFullscreenText',
-					},
-				},
-			],
-		})
-		presets.push({
-			type: 'button',
-			category: 'Message Control',
-			name: 'Display prepared fullscreen message',
-			style: {
-				style: 'text',
-				text: `$(generic-module:preparedFullscreenMessage)`,
-				size: 'auto',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(182, 182, 182),
-			},
-			steps: [],
-			feedbacks: [
-				{
-					feedbackId: 'btnActive',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'showFullscreenText',
-					},
-				},
-			],
-		})
-		presets.push({
-			type: 'button',
-			category: 'Message Control',
-			name: 'Define fullscreen message',
-			style: {
-				style: 'text',
-				text: 'Fullscreen message - Please change text',
-				size: '14',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 0, 255),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'setFullscreenMessage',
-							options: {
-								message: 'Change fullscreen message here',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-		})
-
-		presets.push({
-			type: 'button',
-			category: 'Presets',
-			name: 'Custom Preset',
-			style: {
-				style: 'text',
-				text: 'Custom Preset',
-				size: '14',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 0, 255),
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'customPreset',
-							options: {
-								time: '0',
-								minSec: 'sec',
-								direction: 'countDown',
-								driectCall: true,
-								warnTime: '0',
-							},
-						},
-					],
-					up: [],
-				},
-			],
-		})
-
-		let sfPresets = stageflowPresets || []
-		let presetID = 0
-		if (sfPresets.length >= 1) {
-			sfPresets?.forEach((preset) => {
-				console.log(preset)
-				presets.push({
-					type: 'button',
-					category: 'Presets',
-					name: 'Use Preset',
-					style: {
-						style: 'text',
-						text: `$(generic-module:preset_${presetID})`,
-						size: 'auto',
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(255, 255, 0),
-					},
-					steps: [
-						{
-							down: [
-								{
-									actionId: 'preset',
-									options: {
-										presetID,
-										directCall: false,
-									},
-								},
-							],
-
-							up: [],
-						},
-					],
-				})
-
-				presetID++
-			})
-		}
-
-		// Presets for current time, combined time, hours, minutes, seconds
-
-		presets.push({
-			type: 'button',
-			category: 'Timer Display',
-			name: 'Timer combined',
-			style: {
-				style: 'text',
-				text: `$(generic-module:combined)`,
-				size: '17',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(182, 182, 182),
-			},
-			steps: [],
-			feedbacks: [
-				{
-					feedbackId: 'timerActive',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'timeIsNotUp',
-					},
-				},
-				{
-					feedbackId: 'timeIsUp',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(255, 0, 0),
-					},
-					options: {
-						key: 'timeIsUp',
-					},
-				},
-			],
-		})
-		presets.push({
-			type: 'button',
-			category: 'Timer Display',
-			name: 'Timer Hours',
-			style: {
-				style: 'text',
-				text: `$(generic-module:hours)`,
-				size: 'auto',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(182, 182, 182),
-			},
-			steps: [],
-			feedbacks: [
-				{
-					feedbackId: 'timerActive',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'timeIsNotUp',
-					},
-				},
-				{
-					feedbackId: 'timeIsUp',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(255, 0, 0),
-					},
-					options: {
-						key: 'timeIsUp',
-					},
-				},
-			],
-		})
-		presets.push({
-			type: 'button',
-			category: 'Timer Display',
-			name: 'Timer Minutes',
-			style: {
-				style: 'text',
-				text: `$(generic-module:minutes)`,
-				size: 'auto',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(182, 182, 182),
-			},
-			steps: [],
-			feedbacks: [
-				{
-					feedbackId: 'timerActive',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'timeIsNotUp',
-					},
-				},
-				{
-					feedbackId: 'timeIsUp',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(255, 0, 0),
-					},
-					options: {
-						key: 'timeIsUp',
-					},
-				},
-			],
-		})
-		presets.push({
-			type: 'button',
-			category: 'Timer Display',
-			name: 'Timer seconds',
-			style: {
-				style: 'text',
-				text: `$(generic-module:seconds)`,
-				size: 'auto',
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(182, 182, 182),
-			},
-			steps: [],
-			feedbacks: [
-				{
-					feedbackId: 'timerActive',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
-					},
-					options: {
-						key: 'timeIsNotUp',
-					},
-				},
-				{
-					feedbackId: 'timeIsUp',
-					style: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(255, 0, 0),
-					},
-					options: {
-						key: 'timeIsUp',
-					},
-				},
-			],
-		})
-
-		return presets
-	},
+	return { structure, presets }
 }
