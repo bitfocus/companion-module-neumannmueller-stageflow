@@ -1,8 +1,9 @@
-import { combineRgb } from '@companion-module/base'
+import { combineRgb, type CompanionFeedbackDefinitions, type DropdownChoice } from '@companion-module/base'
+import type { StageflowModule } from './types.js'
 
-export const FEEDBACK_IDS = ['timerActive', 'timeIsUp', 'btnActive', 'warnZone']
+export const FEEDBACK_IDS = ['timerActive', 'timeIsUp', 'btnActive', 'warnZone'] as const
 
-const BTN_ACTIVE_KEYS = [
+const BTN_ACTIVE_KEYS: DropdownChoice[] = [
 	{ id: 'showText', label: 'Message shown' },
 	{ id: 'showFullscreenText', label: 'Fullscreen message shown' },
 	{ id: 'showTimer', label: 'Timer shown' },
@@ -24,7 +25,7 @@ const BTN_ACTIVE_KEYS = [
 	{ id: 'pause', label: 'Timer paused' },
 ]
 
-export function getFeedbackDefinitions(self) {
+export function getFeedbackDefinitions(self: StageflowModule): CompanionFeedbackDefinitions {
 	return {
 		timerActive: {
 			type: 'boolean',
@@ -103,7 +104,7 @@ export function getFeedbackDefinitions(self) {
 					choices: BTN_ACTIVE_KEYS,
 				},
 			],
-			callback: (feedback) => !!self.timerData?.[feedback.options?.key],
+			callback: (feedback) => !!(self.timerData as Record<string, unknown>)?.[String(feedback.options?.key)],
 		},
 	}
 }

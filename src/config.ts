@@ -1,9 +1,7 @@
-import { Regex } from '@companion-module/base'
+import { Regex, type SomeCompanionConfigField } from '@companion-module/base'
+import type { StageflowConfig } from './types.js'
 
-/**
- * Configuration fields for the web config.
- */
-export function getConfigFields() {
+export function getConfigFields(): SomeCompanionConfigField[] {
 	return [
 		{
 			type: 'static-text',
@@ -26,7 +24,6 @@ export function getConfigFields() {
 			default: 'stageflow.local',
 			regex: Regex.HOSTNAME,
 			width: 6,
-			required: true,
 			isVisibleExpression: '!$(options:stageflow)',
 		},
 		{
@@ -37,7 +34,6 @@ export function getConfigFields() {
 			min: 1,
 			max: 65535,
 			width: 6,
-			required: true,
 			isVisibleExpression: '!$(options:stageflow)',
 		},
 		{
@@ -55,7 +51,7 @@ export function getConfigFields() {
  * Resolve the effective host/port from the config.
  * A bonjour selection ("address:port") overrides the manual fields.
  */
-export function resolveTarget(config) {
+export function resolveTarget(config: StageflowConfig | undefined): { host: string; port: number } | null {
 	if (typeof config?.stageflow === 'string' && config.stageflow.includes(':')) {
 		const idx = config.stageflow.lastIndexOf(':')
 		const host = config.stageflow.slice(0, idx)
@@ -63,6 +59,6 @@ export function resolveTarget(config) {
 		if (host && Number.isFinite(port)) return { host, port }
 	}
 	const port = typeof config?.port === 'string' ? parseInt(config.port, 10) : config?.port
-	if (config?.host && Number.isFinite(port)) return { host: config.host, port }
+	if (config?.host && port !== undefined && Number.isFinite(port)) return { host: config.host, port }
 	return null
 }

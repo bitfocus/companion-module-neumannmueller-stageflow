@@ -1,4 +1,14 @@
-import { combineRgb } from '@companion-module/base'
+import {
+	combineRgb,
+	type CompanionButtonStyleProps,
+	type CompanionPresetDefinitions,
+	type CompanionPresetSection,
+	type CompanionSimplePresetDefinition,
+	type CompanionTextSize,
+	type SomePresetActionEntry,
+	type SomePresetSimpleFeedbackEntry,
+} from '@companion-module/base'
+import type { StageflowModule } from './types.js'
 
 const BLACK = combineRgb(0, 0, 0)
 const GRAY = combineRgb(182, 182, 182)
@@ -9,7 +19,12 @@ const ORANGE = combineRgb(255, 128, 0)
 const MAGENTA = combineRgb(255, 0, 255)
 
 /** Simple one-action button preset. */
-const button = (name, style, actions, feedbacks = []) => ({
+const button = (
+	name: string,
+	style: CompanionButtonStyleProps,
+	actions: SomePresetActionEntry[],
+	feedbacks: SomePresetSimpleFeedbackEntry[] = [],
+): CompanionSimplePresetDefinition => ({
 	type: 'simple',
 	name,
 	style,
@@ -18,7 +33,11 @@ const button = (name, style, actions, feedbacks = []) => ({
 })
 
 /** Preset for a server/assign toggle action with btnActive feedback. */
-const togglePreset = (actionId, text, feedbackKey = actionId) =>
+const togglePreset = (
+	actionId: string,
+	text: string,
+	feedbackKey: string = actionId,
+): CompanionSimplePresetDefinition =>
 	button(
 		text,
 		{ text, size: '14', color: BLACK, bgcolor: YELLOW },
@@ -33,7 +52,7 @@ const togglePreset = (actionId, text, feedbackKey = actionId) =>
 	)
 
 /** Timer display preset showing one variable, colored by timer state. */
-const displayPreset = (name, text, size = 'auto') =>
+const displayPreset = (name: string, text: string, size: CompanionTextSize = 'auto'): CompanionSimplePresetDefinition =>
 	button(
 		name,
 		{ text, size, color: BLACK, bgcolor: GRAY },
@@ -57,11 +76,14 @@ const displayPreset = (name, text, size = 'auto') =>
 		],
 	)
 
-export function buildPresets(self) {
+export function buildPresets(self: StageflowModule): {
+	structure: CompanionPresetSection[]
+	presets: CompanionPresetDefinitions
+} {
 	const label = self.label
-	const v = (variableId) => `$(${label}:${variableId})`
+	const v = (variableId: string): string => `$(${label}:${variableId})`
 
-	const presets = {
+	const presets: CompanionPresetDefinitions = {
 		// Timer Control /////////////////////////////////////////////////////
 		startPause: button(
 			'Start/Pause Timer',
@@ -77,7 +99,7 @@ export function buildPresets(self) {
 		),
 		start: button(
 			'Start Timer',
-			{ text: 'START', size: '20', color: BLACK, bgcolor: GREEN },
+			{ text: 'START', size: 20, color: BLACK, bgcolor: GREEN },
 			[{ actionId: 'start', options: {} }],
 			[
 				{
@@ -89,7 +111,7 @@ export function buildPresets(self) {
 		),
 		pause: button(
 			'Pause Timer',
-			{ text: 'PAUSE', size: '20', color: BLACK, bgcolor: YELLOW },
+			{ text: 'PAUSE', size: 20, color: BLACK, bgcolor: YELLOW },
 			[{ actionId: 'pause', options: {} }],
 			[
 				{
@@ -201,14 +223,14 @@ export function buildPresets(self) {
 		),
 
 		// Timer Display /////////////////////////////////////////////////////
-		timerCombined: displayPreset('Timer combined', v('combined'), '17'),
+		timerCombined: displayPreset('Timer combined', v('combined'), 17),
 		timerHours: displayPreset('Timer Hours', v('hours')),
 		timerMinutes: displayPreset('Timer Minutes', v('minutes')),
 		timerSeconds: displayPreset('Timer seconds', v('seconds')),
 	}
 
 	// Dynamic Stageflow presets /////////////////////////////////////////////
-	const sfIds = []
+	const sfIds: string[] = []
 	const sfPresets = self.stageflowPresets ?? []
 	for (let i = 0; i < sfPresets.length; i++) {
 		const id = `sfPreset_${i}`
@@ -220,7 +242,7 @@ export function buildPresets(self) {
 		)
 	}
 
-	const structure = [
+	const structure: CompanionPresetSection[] = [
 		{
 			id: 'timerControl',
 			name: 'Timer Control',

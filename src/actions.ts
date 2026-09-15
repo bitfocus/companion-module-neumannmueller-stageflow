@@ -1,4 +1,11 @@
-const MODE_OPTION = {
+import type {
+	CompanionActionDefinition,
+	CompanionActionDefinitions,
+	SomeCompanionActionInputField,
+} from '@companion-module/base'
+import type { StageflowModule, TimerData } from './types.js'
+
+const MODE_OPTION: SomeCompanionActionInputField = {
 	type: 'dropdown',
 	id: 'mode',
 	label: 'Mode',
@@ -10,7 +17,7 @@ const MODE_OPTION = {
 	],
 }
 
-const MIN_SEC_OPTION = {
+const MIN_SEC_OPTION: SomeCompanionActionInputField = {
 	type: 'dropdown',
 	id: 'minSec',
 	label: 'Minutes or Seconds',
@@ -21,11 +28,11 @@ const MIN_SEC_OPTION = {
 	],
 }
 
-const toMs = (time, minSec) => {
+const toMs = (time: unknown, minSec: unknown): number => {
 	const t = Number(time) || 0
 	return minSec === 'min' ? t * 60 * 1000 : t * 1000
 }
-const toSeconds = (time, minSec) => {
+const toSeconds = (time: unknown, minSec: unknown): number => {
 	const t = Number(time) || 0
 	return minSec === 'min' ? t * 60 : t
 }
@@ -35,9 +42,8 @@ const toSeconds = (time, minSec) => {
  * ignored by unpatched Stageflow apps; patched apps assign a boolean value).
  * Mode 'toggle' therefore sends the bare command; 'on'/'off' send a boolean.
  */
-const serverToggle = (self, cmd, name, description) => ({
+const serverToggle = (self: StageflowModule, cmd: string, name: string): CompanionActionDefinition => ({
 	name,
-	description,
 	options: [MODE_OPTION],
 	callback: (action) => {
 		const mode = action.options?.mode ?? 'toggle'
@@ -50,9 +56,12 @@ const serverToggle = (self, cmd, name, description) => ({
  * Commands the server assigns from the sent value on every app version
  * (showText, showFullscreenText, flash, blackout).
  */
-const assignToggle = (self, cmd, name, description) => ({
+const assignToggle = (
+	self: StageflowModule,
+	cmd: keyof TimerData & string,
+	name: string,
+): CompanionActionDefinition => ({
 	name,
-	description,
 	options: [MODE_OPTION],
 	callback: (action) => {
 		const mode = action.options?.mode ?? 'toggle'
@@ -61,7 +70,7 @@ const assignToggle = (self, cmd, name, description) => ({
 	},
 })
 
-export function getActionDefinitions(self) {
+export function getActionDefinitions(self: StageflowModule): CompanionActionDefinitions {
 	return {
 		// Timer control /////////////////////////////////////////////////////
 		startPause: {
@@ -183,7 +192,7 @@ export function getActionDefinitions(self) {
 			],
 			callback: (action) => {
 				const opt = action.options
-				const presetID = parseInt(opt.presetID, 10)
+				const presetID = parseInt(String(opt.presetID), 10)
 				if (!Number.isFinite(presetID) || presetID < 0) {
 					self.log('warn', `Invalid preset ID: ${opt.presetID}`)
 					return

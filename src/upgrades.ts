@@ -1,14 +1,20 @@
+import type { CompanionStaticUpgradeScript, ExpressionOrValue } from '@companion-module/base'
+import type { JsonValue } from '@companion-module/base'
+import type { StageflowConfig } from './types.js'
+
+type UpgradeScript = CompanionStaticUpgradeScript<StageflowConfig, undefined>
+
 /**
  * Upgrade scripts. Order and count of already-shipped scripts must never
  * change - Companion tracks how many have run per connection.
  */
 
 /** Unwrap an ExpressionOrValue-style migration option (or pass a legacy plain value through). */
-const rawValue = (v) => (v && typeof v === 'object' && 'value' in v ? v.value : v)
-const wrapValue = (value) => ({ value, isExpression: false })
+const rawValue = (v: unknown): unknown => (v && typeof v === 'object' && 'value' in v ? v.value : v)
+const wrapValue = <T extends JsonValue>(value: T): ExpressionOrValue<T> => ({ value, isExpression: false })
 
 /** Script 0: shipped placeholder from v2.x - must stay in place. */
-const script0 = () => ({
+const script0: UpgradeScript = () => ({
 	updatedConfig: null,
 	updatedActions: [],
 	updatedFeedbacks: [],
@@ -27,8 +33,8 @@ const MODE_ACTIONS = [
 ]
 
 /** Script 1 (v3.0.0): numeric port, 'mode' option backfill, driectCall typo fix. */
-const v300 = (_context, props) => {
-	const result = {
+const v300: UpgradeScript = (_context, props) => {
+	const result: ReturnType<UpgradeScript> = {
 		updatedConfig: null,
 		updatedActions: [],
 		updatedFeedbacks: [],
@@ -67,4 +73,4 @@ const v300 = (_context, props) => {
 	return result
 }
 
-export const UpgradeScripts = [script0, v300]
+export const UpgradeScripts: UpgradeScript[] = [script0, v300]

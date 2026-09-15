@@ -1,9 +1,12 @@
+import type { CompanionVariableDefinitions, CompanionVariableValues } from '@companion-module/base'
+import type { StageflowPreset } from './types.js'
+
 /**
  * Variable definitions. setVariableDefinitions (base v2) takes an object
  * keyed by variableId.
  */
-export function buildVariableDefinitions(stageflowPresets) {
-	const definitions = {
+export function buildVariableDefinitions(stageflowPresets: StageflowPreset[]): CompanionVariableDefinitions {
+	const definitions: CompanionVariableDefinitions = {
 		currentTime: { name: 'Current Time (host-corrected epoch ms)' },
 		combined: { name: 'Combined Time (H:MM:SS)' },
 		hours: { name: 'Hours' },
@@ -23,8 +26,8 @@ export function buildVariableDefinitions(stageflowPresets) {
 }
 
 /** Values for the dynamic preset_N variables. */
-export function buildPresetVariableValues(stageflowPresets) {
-	const values = {}
+export function buildPresetVariableValues(stageflowPresets: StageflowPreset[]): CompanionVariableValues {
+	const values: CompanionVariableValues = {}
 	for (let i = 0; i < (stageflowPresets?.length ?? 0); i++) {
 		values[`preset_${i}`] = stageflowPresets[i]?.name ?? ''
 	}

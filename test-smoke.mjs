@@ -1,12 +1,12 @@
 // Ad-hoc smoke test (not shipped): node test-smoke.mjs
 import assert from 'node:assert'
-import { TimerEngine } from './src/timer.js'
-import { getActionDefinitions } from './src/actions.js'
-import { getFeedbackDefinitions, FEEDBACK_IDS } from './src/feedbacks.js'
-import { buildVariableDefinitions, buildPresetVariableValues } from './src/variables.js'
-import { buildPresets } from './src/presets.js'
-import { UpgradeScripts } from './src/upgrades.js'
-import { resolveTarget, getConfigFields } from './src/config.js'
+import { TimerEngine } from './dist/timer.js'
+import { getActionDefinitions } from './dist/actions.js'
+import { getFeedbackDefinitions, FEEDBACK_IDS } from './dist/feedbacks.js'
+import { buildVariableDefinitions, buildPresetVariableValues } from './dist/variables.js'
+import { buildPresets } from './dist/presets.js'
+import { UpgradeScripts } from './dist/upgrades.js'
+import { resolveTarget, getConfigFields } from './dist/config.js'
 
 // --- TimerEngine math ---------------------------------------------------
 const now = 1_800_000_000_000
